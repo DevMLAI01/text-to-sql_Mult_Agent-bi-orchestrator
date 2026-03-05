@@ -1,0 +1,101 @@
+🏗️ System Design: Multi-Agent BI Orchestrator (Text-to-SQL)
+1. Executive Summary
+Develop a serverless-ready, agentic RAG application that translates natural language questions into complex, executable SQL queries. The system must utilize a multi-agent state machine with built-in self-correction loops to eliminate hallucinations and securely query a mock telecom data warehouse.
+
+2. Mock Database Schema (SQLite via SQLAlchemy)
+The system will interact with an in-memory or local SQLite database simulating a telecom billing and network ecosystem.
+
+Table 1: customers
+
+customer_id (TEXT, Primary Key)
+
+name (TEXT)
+
+plan_type (TEXT) - e.g., 'Prepaid', 'Postpaid_5G', 'Enterprise'
+
+signup_date (DATE)
+
+churn_status (TEXT) - e.g., 'Active', 'Churned'
+
+Table 2: billing
+
+invoice_id (TEXT, Primary Key)
+
+customer_id (TEXT, Foreign Key)
+
+billing_month (TEXT) - Format: YYYY-MM
+
+amount_due (REAL)
+
+is_paid (BOOLEAN)
+
+Table 3: network_usage
+
+usage_id (TEXT, Primary Key)
+
+customer_id (TEXT, Foreign Key)
+
+month (TEXT) - Format: YYYY-MM
+
+data_gb_used (REAL)
+
+dropped_calls_count (INTEGER)
+
+3. The 6 Core Technical Pillars
+Core App Frameworks: LangGraph for multi-agent state management and cyclic routing. LangChain for core LLM wrappers and prompt templating.
+
+Tool Connectivity: SQLAlchemy to manage secure, read-only connections to the SQLite database and retrieve dynamic table schemas.
+
+Models & Inference Runtime: GPT-4o (or Claude 3.5 Sonnet) for the complex reasoning and SQL generation nodes.
+
+Retrieval & Vector Databases (RAG): ChromaDB to store the company's "Data Dictionary" (e.g., text definitions of what constitutes "High-Value Churn"). This is queried before SQL generation.
+
+Evaluation Toolkits: Pydantic for deterministic structural guardrails (ensuring the output is strictly a SELECT statement).
+
+Observability, Tracing & Monitoring: LangSmith integrated natively to trace token usage, agent loops, and execution latency across all nodes.
+
+4. LangGraph Architecture (The State Machine)
+A. Graph State Definition (TypedDict)
+The memory passed between nodes must track:
+
+user_question (str)
+
+business_context (str) - Retrieved from ChromaDB
+
+database_schema (str) - Pulled via SQLAlchemy
+
+generated_sql (str)
+
+execution_error (str) - Populated if the SQL fails
+
+raw_data_result (list)
+
+final_summary (str)
+
+retry_count (int) - To prevent infinite loops
+
+B. Node Definitions
+Node_1_Retriever (Data Steward): Takes the user_question, queries ChromaDB for business rules, fetches the database DDL via SQLAlchemy, and updates the State.
+
+Node_2_SQL_Coder (Developer): Analyzes the question, schema, and business context to write a precise SELECT query. If execution_error exists in the State, it reads the error and rewrites the query.
+
+Node_3_DB_Executor (DBA): Safely executes generated_sql. If it fails, it captures the stack trace into execution_error. If it succeeds, it saves the output to raw_data_result.
+
+Node_4_Analyst (Storyteller): Translates the raw_data_result into a polished, executive-friendly text summary.
+
+C. Edge Routing Logic
+Start ➡️ Node_1_Retriever
+
+Node_1_Retriever ➡️ Node_2_SQL_Coder
+
+Node_2_SQL_Coder ➡️ Node_3_DB_Executor
+
+Conditional Edge from Node_3_DB_Executor:
+
+IF Execution Success: Route to Node_4_Analyst
+
+IF Execution Fails AND retry_count < 3: Route back to Node_2_SQL_Coder
+
+IF Execution Fails AND retry_count >= 3: Route to Node_4_Analyst (with a graceful failure message)
+
+Node_4_Analyst ➡️ END

@@ -1,0 +1,42 @@
+# deployment/bi-orchestrator.service
+# systemd unit — keeps Streamlit alive and auto-restarts on crash.
+#
+# Installed to: /etc/systemd/system/bi-orchestrator.service
+# Managed via:
+#   sudo systemctl enable  bi-orchestrator
+#   sudo systemctl start   bi-orchestrator
+#   sudo systemctl status  bi-orchestrator
+#   journalctl -u bi-orchestrator -f    (live logs)
+
+[Unit]
+Description=Multi-Agent BI Orchestrator (Streamlit)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/app
+
+# Source .env so ANTHROPIC_API_KEY and LANGCHAIN_API_KEY are available
+EnvironmentFile=/home/ubuntu/app/.env
+
+ExecStart=/home/ubuntu/app/.venv/bin/streamlit run /home/ubuntu/app/app.py \
+          --server.port 8501 \
+          --server.headless true \
+          --server.enableCORS false \
+          --server.enableXsrfProtection false
+
+# Restart policy: restart on any failure, wait 5 s between attempts
+Restart=always
+RestartSec=5s
+
+# Give Streamlit / LangGraph time to shut down cleanly
+TimeoutStopSec=15s
+
+# Cap log output
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bi-orchestrator
+
+[Install]
+WantedBy=multi-user.target
