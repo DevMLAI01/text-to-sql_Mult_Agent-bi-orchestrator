@@ -93,6 +93,7 @@ Guidelines:
 - Mention specific numbers, customer names, or amounts where relevant
 - Avoid technical SQL jargon
 - End with a one-sentence business implication or recommendation if appropriate
+- Do NOT use markdown formatting (no **bold**, no *italics*, no headers). Plain text only.
 
 === ORIGINAL QUESTION ===
 {user_question}
