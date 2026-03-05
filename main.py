@@ -19,6 +19,7 @@ Prerequisites:
 """
 
 import re
+from typing import Tuple
 
 import config
 from database.setup import get_engine
@@ -51,7 +52,7 @@ _INJECTION_PATTERNS = [
 _MAX_QUESTION_LENGTH = 500
 
 
-def _check_input(question: str) -> tuple[bool, str]:
+def _check_input(question: str) -> Tuple[bool, str]:
     """
     Returns (is_safe, rejection_reason).
     Blocks questions that exceed the length limit or match injection patterns.

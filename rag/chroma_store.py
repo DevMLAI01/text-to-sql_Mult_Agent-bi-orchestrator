@@ -8,6 +8,7 @@ and query_context().
 """
 
 import math
+from typing import Optional
 import re
 from collections import Counter
 
@@ -133,8 +134,8 @@ def _cosine(a: dict[str, float], b: dict[str, float]) -> float:
 
 
 # Module-level index (built once on first call)
-_index: list[dict[str, float]] | None = None
-_corpus_tokens: list[list[str]] | None = None
+_index: Optional[list] = None
+_corpus_tokens: Optional[list] = None
 
 
 def build_data_dictionary() -> None:
