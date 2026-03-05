@@ -164,7 +164,7 @@ if submitted and question.strip():
     st.subheader("Executive Summary")
     summary = final_state.get("final_summary", "")
     if summary:
-        st.markdown(summary)
+        st.markdown(f'<p style="font-size:16px; line-height:1.8">{summary}</p>', unsafe_allow_html=True)
     else:
         st.caption("No summary available.")
 
