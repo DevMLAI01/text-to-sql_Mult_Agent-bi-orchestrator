@@ -5,7 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common Commands
 
 ```bash
-# Run the interactive CLI
+# Run the Streamlit web UI (primary interface)
+python -m streamlit run app.py
+
+# Run the interactive CLI (alternative)
 python main.py
 
 # Generate / regenerate the mock SQLite database (2,000 customers)
@@ -89,3 +92,17 @@ All system prompts live here. To change agent behaviour, edit the relevant templ
 ### Data Dictionary (`rag/chroma_store.py`)
 
 Eight business rule documents (churn definitions, plan types, billing semantics, etc.) are indexed in memory on first call to `build_data_dictionary()`. `query_context(question, n_results=3)` returns the top-k entries by TF-IDF cosine similarity.
+
+## Deployment
+
+- **Live URL**: http://3.132.29.156
+- **GitHub**: https://github.com/DevMLAI01/text-to-sql_Mult_Agent-bi-orchestrator
+- **EC2**: t3.micro, Amazon Linux 2023, us-east-2, user=`ec2-user`, app at `~/app/`
+- **Services**: `sudo systemctl status bi-orchestrator` / `sudo systemctl status nginx`
+- **Logs**: `journalctl -u bi-orchestrator -f`
+- **Update**: `cd ~/app && git pull && sudo systemctl restart bi-orchestrator`
+
+### Python Compatibility Notes
+- Use `Optional[X]` from `typing` instead of `X | None` (server runs Python 3.9)
+- Use `Tuple[X, Y]` from `typing` instead of `tuple[X, Y]`
+- `python -m streamlit run app.py` works even if `streamlit` is not on PATH (Windows)

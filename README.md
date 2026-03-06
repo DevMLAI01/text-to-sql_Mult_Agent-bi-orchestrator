@@ -174,16 +174,6 @@ Internet
   (Claude models)        (Tracing)
 ```
 
-### AWS Free Tier Cost
-
-| Service | Free Tier Limit | Monthly Cost |
-|---------|-----------------|--------------|
-| EC2 t3.micro | 750 hrs/month (12 months) | $0 |
-| EBS 8 GB gp2 | 30 GB free | $0 |
-| Elastic IP | Free while attached | $0 |
-| Data Transfer | 100 GB/month free | $0 |
-| **Total** | | **$0/month** |
-
 ---
 
 ## Tech Stack
