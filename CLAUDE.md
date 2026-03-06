@@ -14,8 +14,8 @@ python main.py
 # Generate / regenerate the mock SQLite database (2,000 customers)
 python generate_data.py
 
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies (always use uv)
+uv pip install -r requirements.txt
 ```
 
 ## Environment Setup
@@ -101,6 +101,10 @@ Eight business rule documents (churn definitions, plan types, billing semantics,
 - **Services**: `sudo systemctl status bi-orchestrator` / `sudo systemctl status nginx`
 - **Logs**: `journalctl -u bi-orchestrator -f`
 - **Update**: `cd ~/app && git pull && sudo systemctl restart bi-orchestrator`
+
+### Package Management
+- Always use `uv` for installs: `uv pip install -r requirements.txt` or `uv pip install <package>`
+- Never use bare `pip install` — use `uv pip install` instead
 
 ### Python Compatibility Notes
 - Use `Optional[X]` from `typing` instead of `X | None` (server runs Python 3.9)

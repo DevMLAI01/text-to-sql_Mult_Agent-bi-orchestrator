@@ -271,6 +271,7 @@ else:
 
 ### Prerequisites
 - Python 3.9+
+- [uv](https://docs.astral.sh/uv/) — fast Python package manager (`pip install uv` or see uv docs)
 - Anthropic API key (`sk-ant-...`)
 - LangSmith API key (`lsv2_...`) — optional but recommended
 
@@ -281,8 +282,8 @@ else:
 git clone https://github.com/DevMLAI01/text-to-sql_Mult_Agent-bi-orchestrator.git
 cd text-to-sql_Mult_Agent-bi-orchestrator
 
-# 2. Install dependencies
-pip install -r requirements.txt
+# 2. Install dependencies (using uv)
+uv pip install -r requirements.txt
 
 # 3. Configure environment
 cp .env.example .env
