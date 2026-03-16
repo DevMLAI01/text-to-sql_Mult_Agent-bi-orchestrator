@@ -1,5 +1,13 @@
 # Multi-Agent BI Orchestrator — Text-to-SQL
 
+<div align="center">
+
+| 🔒 Security Layers | 🤖 Claude Models | 🔁 Self-Correction | 🌐 Deployment |
+|:---:|:---:|:---:|:---:|
+| **5** independent guards | **3** (Haiku · Opus · Sonnet) | Up to **3 retries** | Live · AWS EC2 |
+
+</div>
+
 A production-deployed, multi-agent AI system that converts plain English business questions into SQL queries, executes them against a telecom database, and returns executive-level summaries — all fully automated.
 
 **Live Demo:** http://3.132.29.156 — *natural language → validated SQL → executive summary in under 3 seconds*
@@ -182,6 +190,15 @@ Internet
   Anthropic API          LangSmith
   (Claude models)        (Tracing)
 ```
+
+---
+
+## 💼 Why This Matters
+Business intelligence teams are bottlenecked by the need for SQL expertise to
+answer operational questions. This system is designed to eliminate that bottleneck
+by routing natural language questions through a 3-model Claude pipeline with
+5 independent security guards — making live telecom data accessible to
+non-technical stakeholders without exposing the database to injection risks.
 
 ---
 
