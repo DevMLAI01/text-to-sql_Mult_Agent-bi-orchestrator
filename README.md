@@ -66,47 +66,54 @@ Visit **http://3.132.29.156** in your browser.
 
 ## How It Works
 
-The system is a **LangGraph state machine** with 4 sequential nodes:
+A **4-node multi-model LangGraph pipeline** where each node uses a different Claude model optimised for that task — from fast context retrieval through to executive narrative generation.
 
-```
-User Question
-     │
-     ▼
-┌─────────────────────────────────────┐
-│  Node 1: Retriever  (Haiku)         │
-│  • Queries TF-IDF RAG for context   │
-│  • Fetches live DB schema via DDL   │
-│  • Produces a concise context brief │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Node 2: SQL Coder  (Opus)          │
-│  • Generates SELECT query           │
-│  • Pydantic validates: SELECT-only, │
-│    allowed tables, strips fences    │
-│  • On error: injects error context  │
-│    for self-correction              │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Node 3: DB Executor  (No LLM)      │
-│  • Runs query via read-only engine  │
-│  • Appends LIMIT 500 if missing     │
-│  • Returns rows or error message    │
-└──────────────┬──────────────────────┘
-               │
-         ┌─────┴─────┐
-         │  Error?   │
-         └─────┬─────┘
-     Yes ──────┘──────── No
-      │                   │
-      ▼ (retry < 3)        ▼
-  Back to Node 2      Node 4: Analyst (Sonnet)
-                       • Narrates results in
-                         plain business English
-                       • Executive summary output
+```mermaid
+flowchart TD
+    A([👤 Business User\nStreamlit UI]) -->|Natural language question| B
+
+    subgraph SECURITY [🔒 Security Layer · 5 Guards]
+        S1[Input sanitisation\n14 regex patterns]
+        S2[SELECT-only enforcement\nPydantic validation]
+        S3[Table allow-listing\nAST parsing]
+        S4[Hard 500-row limit]
+        S5[Read-only SQLite\nconnection]
+    end
+
+    B[🛡️ Security Gate] --> S1
+    S1 --> S2 --> S3
+    S3 -->|✅ Safe| C
+
+    subgraph GRAPH [LangGraph State Machine · LangSmith Observability]
+        direction TB
+        C[📚 Node 1 · Retriever\nClaude Haiku\nTF-IDF RAG · DB schema fetch]
+        C --> D
+
+        D[🧠 Node 2 · SQL Coder\nClaude Opus\nSELECT generation · Pydantic guards]
+        D --> E
+
+        E[⚡ Node 3 · Executor\nSQLAlchemy\nAuto LIMIT enforcement]
+        E --> F
+
+        F{Results\nvalid?}
+        F -->|✅ Yes| G
+        F -->|❌ SQL error\nretry < 3| D
+
+        G[📊 Node 4 · Analyst\nClaude Sonnet\nBusiness narrative generation]
+    end
+
+    G --> H([📋 Executive Summary\nreturned to Streamlit UI])
+
+    subgraph DB [Database · AWS EC2]
+        I[(SQLite · Read-only\n2,000 mock telecom customers\ncustomers · billing · network_usage)]
+    end
+
+    E --- I
+
+    style SECURITY fill:#2e1a1a,stroke:#ff4a4a,color:#fff
+    style GRAPH fill:#1a1a2e,stroke:#4a9eff,color:#fff
+    style DB fill:#1a2e1a,stroke:#4aff9e,color:#fff
+    style F fill:#2e2a1a,stroke:#ffcc4a,color:#fff
 ```
 
 ### Self-Correction Loop
