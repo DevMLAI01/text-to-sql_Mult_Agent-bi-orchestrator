@@ -2,7 +2,7 @@
 
 A production-deployed, multi-agent AI system that converts plain English business questions into SQL queries, executes them against a telecom database, and returns executive-level summaries — all fully automated.
 
-**Live Demo:** http://3.132.29.156
+**Live Demo:** http://3.132.29.156 — *natural language → validated SQL → executive summary in under 3 seconds*
 **GitHub:** https://github.com/DevMLAI01/text-to-sql_Mult_Agent-bi-orchestrator
 
 ---
@@ -24,6 +24,8 @@ No SQL knowledge required. No hallucinated tables. No prompt injection possible.
 ---
 
 ## Live Demo
+
+> Converts natural language questions into validated SQL and executive summaries in under 3 seconds, deployed on AWS EC2 with Nginx serving live traffic.
 
 Visit **http://3.132.29.156** in your browser.
 

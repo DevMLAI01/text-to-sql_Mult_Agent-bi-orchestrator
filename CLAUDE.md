@@ -95,7 +95,7 @@ Eight business rule documents (churn definitions, plan types, billing semantics,
 
 ## Deployment
 
-- **Live URL**: http://3.132.29.156
+- **Live URL**: http://3.132.29.156 — natural language → validated SQL → executive summary in under 3 seconds
 - **GitHub**: https://github.com/DevMLAI01/text-to-sql_Mult_Agent-bi-orchestrator
 - **EC2**: t3.micro, Amazon Linux 2023, us-east-2, user=`ec2-user`, app at `~/app/`
 - **Services**: `sudo systemctl status bi-orchestrator` / `sudo systemctl status nginx`
